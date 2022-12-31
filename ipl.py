@@ -27,6 +27,7 @@ batter_data = ball_withmatch[np.append(balls.columns.values, ['BowlingTeam', 'Pl
 
 
 
+
 # to get all team names
 def allteamsAPI():
     teams = list(set(list(matches['Team1']) + list(matches['Team2'])))
@@ -37,12 +38,35 @@ def allteamsAPI():
 
 
 
+# to get all batsman name
+def allbatsmanAPI():
+    batsmans = list(batter_data['batter'].unique())
+    batsman_dict = {
+        'batsman':batsmans
+    }
+    return batsman_dict
+
+
+
+
+# to get all bowler name
+def allbowlerAPI():
+    bowlers = list(batter_data['bowler'].unique())
+    bowler_dict = {
+        'bowler':bowlers
+    }
+    return bowler_dict
+
+
+
+
 # to get info b/w two teams
 def teamVSteamAPI(team1,team2):
     valid_teams = list(set(list(matches['Team1']) + list(matches['Team2'])))
 
     if (team1 in valid_teams) and (team2 in valid_teams):
-        temp_df = matches[((matches['Team1'] == team1) & (matches['Team2'] == team2)) | ((matches['Team2'] == team1) & (matches['Team1'] == team2))]
+        temp_df = matches[((matches['Team1'] == team1) & (matches['Team2'] == team2)) | (
+                    (matches['Team2'] == team1) & (matches['Team1'] == team2))]
 
         total_matches = temp_df.shape[0]
         try:
@@ -58,15 +82,15 @@ def teamVSteamAPI(team1,team2):
         draws = total_matches - (won_team1 + won_team2)
 
         response = {'matches_played': str(total_matches),
-                     team1          : str(won_team1),
-                     team2          : str(won_team2),
-                     'draws'        : str(draws)
+                    team1: str(won_team1),
+                    team2: str(won_team2),
+                    'draws': str(draws)
                     }
         return response
 
     else:
         return {
-            'message':'invalid team name'
+            'message': 'invalid team name'
         }
 
 
@@ -82,10 +106,10 @@ def allRecordAPI(team):
     won_IPL = df[(df['MatchNumber'] == 'Final') & (df['WinningTeam'] == team)].shape[0]
 
     return {'matchesplayed': match_played,
-            'won'          : won,
-            'loss'         : loss,
-            'noResult'     : no_result,
-            'title'        : won_IPL}
+            'won': won,
+            'loss': loss,
+            'noResult': no_result,
+            'title': won_IPL}
 
 
 
@@ -95,7 +119,6 @@ def teamAPI(team):
     self_record = allRecordAPI(team)
     TEAMS = matches['Team1'].unique()
     against = {t: teamVSteamAPI(team, t) for t in TEAMS}
-    print(against)
 
     data = {team: {'overall': self_record,
                    'against': against
